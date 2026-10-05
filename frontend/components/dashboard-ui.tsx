@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+export type DashboardView = 'overview' | 'files' | 'nodes' | 'activity';
+
 export function PanelHeading({ title, detail }: { title: string; detail: string }) {
   return <div className="panel-heading"><h2>{title}</h2><span>{detail}</span></div>;
 }
@@ -12,10 +14,22 @@ export function Notice({ message, onDismiss }: { message: string; onDismiss: () 
   return <div className="notice">{message}<button onClick={onDismiss} aria-label="Dismiss message">×</button></div>;
 }
 
-export function DashboardHeader() {
+export function DashboardHeader({ activeView, onViewChange }: { activeView: DashboardView; onViewChange: (view: DashboardView) => void }) {
+  const views: Array<{ id: DashboardView; label: string }> = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'files', label: 'Files & topology' },
+    { id: 'nodes', label: 'Storage nodes' },
+    { id: 'activity', label: 'Activity' },
+  ];
+
   return <header className="topbar">
     <div className="brand"><span className="brand-mark">M</span><div><strong>MiniDFS</strong><span>distributed storage lab</span></div></div>
-    <div className="connection"><span className="pulse" /> coordinator connected</div>
+    <div className="topbar-right">
+      <nav className="view-nav" aria-label="Dashboard sections">
+        {views.map((view) => <button key={view.id} className={activeView === view.id ? 'active' : ''} onClick={() => onViewChange(view.id)}>{view.label}</button>)}
+      </nav>
+      <div className="connection"><span className="pulse" /> coordinator connected</div>
+    </div>
   </header>;
 }
 

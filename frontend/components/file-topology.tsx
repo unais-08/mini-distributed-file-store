@@ -22,7 +22,8 @@ export function FileTopologyPanel({
     {selected && <div className="topology">
       <div className="topology-heading"><div><p className="eyebrow">SELECTED FILE</p><h2>{selected.originalName}</h2></div><div className="file-actions"><a className="download" href={dfsApi.downloadUrl(selected.id)}>Download ↓</a><button className="delete-button" onClick={() => onDelete(selected)}>Delete</button></div></div>
       <div className="health-line"><span className={degradedChunks ? 'warning-dot' : 'good-dot'} />{degradedChunks ? `${degradedChunks} chunk${degradedChunks === 1 ? '' : 's'} degraded` : 'All replicas healthy'}</div>
-      {selected.chunks.map((chunk) => <div className="chunk-row" key={chunk.id}><div className="chunk-label"><strong>C{chunk.chunkIndex}</strong><small>{formatBytes(chunk.size)}</small></div><div className="replica-track">{chunk.replicas.map((node, index) => node ? <span className={`replica ${node.status === 'ONLINE' ? 'online' : 'offline'}`} key={node.id}><i />{node.name}<small>{index === 0 ? 'primary' : 'replica'}</small></span> : null)}</div></div>)}
+      <div className="flow-guide"><span>chunk</span><b>→</b><span>replicas</span><b>→</b><span>node health</span><b>→</b><span>repair</span></div>
+      {selected.chunks.map((chunk) => <div className="chunk-row" key={chunk.id}><div className="chunk-label"><strong>C{chunk.chunkIndex}</strong><small>{formatBytes(chunk.size)}</small></div><span className="flow-arrow">→</span><div className="replica-track">{chunk.replicas.map((node, index) => node ? <span className={`replica ${node.status === 'ONLINE' ? 'online' : 'offline'}`} key={node.id}><i />{node.name}<small>{node.status === 'ONLINE' ? (index === 0 ? 'primary' : 'replica') : 'failed'}</small></span> : null)}</div></div>)}
     </div>}
   </Panel>;
 }
