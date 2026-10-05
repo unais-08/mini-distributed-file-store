@@ -12,7 +12,20 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Middleware
-app.use(cors());
+if (config.nodeEnv === 'production' && config.corsOrigins.length === 0) {
+    throw new Error('CORS_ORIGINS must be configured in production');
+}
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || config.nodeEnv !== 'production' || config.corsOrigins.includes(origin)) {
+            callback(null, true);
+            return;
+        }
+        callback(new Error('Origin is not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+}));
 app.use(express.json());
 
 const defaultNodes: StorageNodeRecord[] = [1, 2, 3].map((number) => ({

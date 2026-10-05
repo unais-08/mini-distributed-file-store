@@ -9,6 +9,7 @@ const numberFromEnv = (name: string, fallback: number): number => {
 };
 
 export const config = {
+  nodeEnv: process.env.NODE_ENV ?? 'development',
   port: numberFromEnv('PORT', 8080),
   chunkSize: numberFromEnv('CHUNK_SIZE', 1024 * 1024),
   replicationFactor: numberFromEnv('REPLICATION_FACTOR', 2),
@@ -16,4 +17,8 @@ export const config = {
   metadataPath: path.resolve(process.env.METADATA_PATH ?? './data/metadata.json'),
   nodeCapacity: numberFromEnv('NODE_CAPACITY', 1024 * 1024 * 1024),
   databaseUrl: process.env.DATABASE_URL,
+  corsOrigins: (process.env.CORS_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 };
